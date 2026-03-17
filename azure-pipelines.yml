@@ -1,14 +1,13 @@
 trigger:
-  - main
-pool: hitesh_pool_yaml
-
+- main
+pool: hitesh_pool_yaml 
 stages:
 # --- 1. DEV STAGE ---
 - stage: Deploy_DEV
   displayName: 'Deploy to DEV'
   jobs:
   - deployment: Terraform_Dev
-    environment: 'Dev' # Portal wala Environment name
+    environment: 'Dev' # Azure DevOps portal wala Environment
     strategy:
       runOnce:
         deploy:
@@ -28,7 +27,7 @@ stages:
   dependsOn: Deploy_DEV
   jobs:
   - deployment: Terraform_QA
-    environment: 'QA' # Portal wala Environment name
+    environment: 'QA' # Azure DevOps portal wala Environment
     strategy:
       runOnce:
         deploy:
@@ -42,13 +41,13 @@ stages:
               workingDirectory: '$(System.DefaultWorkingDirectory)/environments/qa'
               environmentServiceNameAzureRM: 'hitesh_yaml_service_connection_1'
 
-# --- 3. PROD STAGE ---
+# --- 3. PROD STAGE (THE BOSS STAGE) ---
 - stage: Deploy_PROD
   displayName: 'Deploy to PROD'
   dependsOn: Deploy_QA
   jobs:
   - deployment: Terraform_Prod
-    environment: 'Prod' # Ispe Manual Approval Gate laga hai
+    environment: 'Prod' # Yahan aakar pipeline rukkegi aur Approval mangegi!
     strategy:
       runOnce:
         deploy:
