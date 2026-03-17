@@ -1,0 +1,121 @@
+rg_name = {
+  rg1 = {
+    name       = "rachitargqa"
+    location   = "centralindia"
+    managed_by = "rachita owner"
+    tags = {
+      environment = "qa"
+      project     = "monolithic-infra"
+    }
+  }
+}
+
+vnet_name = {
+  vnet1 = {
+    name          = "rachitavnet"
+    location      = "centralindia"
+    rg_name       = "rachitargqa"
+    address_space = ["10.0.0.0/16"]
+    tags = {
+      environment = "qa"
+      project     = "monolithic-infra"
+    }
+    subnet = [
+      {
+        name             = "rachitasubnet1"
+        address_prefixes = ["10.0.5.0/24"]
+      },
+      {
+        name             = "rachitasubnet2"
+        address_prefixes = ["10.0.6.0/24"]
+      }
+    ]
+  }
+}
+
+public_ip = {
+  pip1 = {
+    name              = "rachitapip1"
+    rg_name           = "rachitargqa"
+    location          = "centralindia"
+    allocation_method = "Static"
+  }
+
+  pip2 = {
+    name              = "rachitapip2"
+    rg_name           = "rachitargqa"
+    location          = "centralindia"
+    allocation_method = "Static"
+  }
+}
+
+key_vault = {
+  kv1 = {
+    name     = "rachitakvqa"
+    location = "centralindia"
+    rg_name  = "rachitargqa"
+  }
+}
+
+vms = {
+  frontend = {
+    name                       = "rachitafrontendvm"
+    location                   = "centralindia"
+    rg_name                    = "rachitargqa"
+    size                       = "Standard_D2s_v3"
+    vnet_name                  = "rachitavnet"
+    vnet_rg_name               = "rachitargqa"
+    subnet_name                = "rachitasubnet1"
+    public_ip_name             = "rachitapip1"
+    key_vault_id               = "/subscriptions/57f45f6e-57b0-4116-b6e6-2366c1e0a95e/resourceGroups/rachitargqa/providers/Microsoft.KeyVault/vaults/rachitakvqa"
+    admin_username_secret_name = "vm-admin-username"
+    admin_password_secret_name = "vm-admin-password"
+    source_image_reference = {
+      publisher = "Canonical"
+      offer     = "0001-com-ubuntu-server-focal"
+      sku       = "20_04-lts"
+      version   = "latest"
+    }
+  }
+
+  backend = {
+    name                       = "rachitabackendvm"
+    location                   = "centralindia"
+    rg_name                    = "rachitargqa"
+    size                       = "Standard_D2s_v3"
+    vnet_name                  = "rachitavnet"
+    vnet_rg_name               = "rachitargqa"
+    subnet_name                = "rachitasubnet2"
+    public_ip_name             = "rachitapip2"
+    key_vault_id               = "/subscriptions/57f45f6e-57b0-4116-b6e6-2366c1e0a95e/resourceGroups/rachitargqa/providers/Microsoft.KeyVault/vaults/rachitakvqa"
+    admin_username_secret_name = "vm-admin-username"
+    admin_password_secret_name = "vm-admin-password"
+    source_image_reference = {
+      publisher = "Canonical"
+      offer     = "0001-com-ubuntu-server-focal"
+      sku       = "20_04-lts"
+      version   = "latest"
+    }
+  }
+}
+
+sql_server = {
+  sql1 = {
+    name                = "rachitasqlserverqa"
+    rg_name             = "rachitargqa"
+    location            = "centralindia"
+    version             = "12.0"
+    minimum_tls_version = "1.2"
+  }
+}
+
+sql_database = {
+  sqld = {
+    name         = "rachitasqldbqa"
+    collation    = "SQL_Latin1_General_CP1_CI_AS"
+    license_type = "LicenseIncluded"
+    max_size_gb  = 100
+    sku_name     = "S2"
+    enclave_type = "VBS"
+  }
+}
