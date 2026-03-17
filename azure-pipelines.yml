@@ -1,0 +1,62 @@
+trigger:  main
+pool: hitesh_pool_yaml
+
+stages:
+# --- 1. DEV STAGE ---
+- stage: Deploy_DEV
+  displayName: 'Deploy to DEV'
+  jobs:
+  - deployment: Terraform_Dev
+    environment: 'Dev' # Portal wala Environment name
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - checkout: self
+          - task: TerraformTaskV4@4
+            displayName: 'Init & Apply Dev'
+            inputs:
+              provider: 'azurerm'
+              command: 'apply'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/environments/dev'
+              environmentServiceNameAzureRM: 'hitesh_yaml_service_connection_1'
+
+# --- 2. QA STAGE ---
+- stage: Deploy_QA
+  displayName: 'Deploy to QA'
+  dependsOn: Deploy_DEV
+  jobs:
+  - deployment: Terraform_QA
+    environment: 'QA' # Portal wala Environment name
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - checkout: self
+          - task: TerraformTaskV4@4
+            displayName: 'Init & Apply QA'
+            inputs:
+              provider: 'azurerm'
+              command: 'apply'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/environments/qa'
+              environmentServiceNameAzureRM: 'hitesh_yaml_service_connection_1'
+
+# --- 3. PROD STAGE ---
+- stage: Deploy_PROD
+  displayName: 'Deploy to PROD'
+  dependsOn: Deploy_QA
+  jobs:
+  - deployment: Terraform_Prod
+    environment: 'Prod' # Ispe Manual Approval Gate laga hai
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - checkout: self
+          - task: TerraformTaskV4@4
+            displayName: 'Init & Apply Prod'
+            inputs:
+              provider: 'azurerm'
+              command: 'apply'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/environments/prod'
+              environmentServiceNameAzureRM: 'hitesh_yaml_service_connection_1'
