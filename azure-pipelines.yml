@@ -1,4 +1,5 @@
-trigger:  main
+trigger:
+  - main
 pool: hitesh_pool_yaml
 
 stages:
