@@ -1,6 +1,8 @@
 trigger:
 - main
+
 pool: hitesh_pool_yaml 
+
 stages:
 # --- 1. DEV STAGE ---
 - stage: Deploy_DEV
@@ -13,8 +15,23 @@ stages:
         deploy:
           steps:
           - checkout: self
+          
+          # NAYA TASK: Pehle Init karenge
           - task: TerraformTaskV4@4
-            displayName: 'Init & Apply Dev'
+            displayName: 'Terraform Init Dev'
+            inputs:
+              provider: 'azurerm'
+              command: 'init'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/environments/dev'
+              backendServiceArm: 'hitesh_yaml_service_connection_1'
+              backendAzureRmResourceGroupName: 'rgworkload'
+              backendAzureRmStorageAccountName: 'storageworkload1'
+              backendAzureRmContainerName: 'containerworkload'
+              backendAzureRmKey: 'dev.terraform.tfstate'
+
+          # PHIR: Apply karenge
+          - task: TerraformTaskV4@4
+            displayName: 'Terraform Apply Dev'
             inputs:
               provider: 'azurerm'
               command: 'apply'
@@ -33,8 +50,23 @@ stages:
         deploy:
           steps:
           - checkout: self
+          
+          # NAYA TASK: QA ke liye Init
           - task: TerraformTaskV4@4
-            displayName: 'Init & Apply QA'
+            displayName: 'Terraform Init QA'
+            inputs:
+              provider: 'azurerm'
+              command: 'init'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/environments/qa'
+              backendServiceArm: 'hitesh_yaml_service_connection_1'
+              backendAzureRmResourceGroupName: 'rgworkload'
+              backendAzureRmStorageAccountName: 'storageworkload1'
+              backendAzureRmContainerName: 'containerworkload'
+              backendAzureRmKey: 'qa.terraform.tfstate'
+
+          # PHIR: QA ke liye Apply
+          - task: TerraformTaskV4@4
+            displayName: 'Terraform Apply QA'
             inputs:
               provider: 'azurerm'
               command: 'apply'
@@ -53,8 +85,23 @@ stages:
         deploy:
           steps:
           - checkout: self
+          
+          # NAYA TASK: Prod ke liye Init
           - task: TerraformTaskV4@4
-            displayName: 'Init & Apply Prod'
+            displayName: 'Terraform Init Prod'
+            inputs:
+              provider: 'azurerm'
+              command: 'init'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/environments/prod'
+              backendServiceArm: 'hitesh_yaml_service_connection_1'
+              backendAzureRmResourceGroupName: 'rgworkload'
+              backendAzureRmStorageAccountName: 'storageworkload1'
+              backendAzureRmContainerName: 'containerworkload'
+              backendAzureRmKey: 'prod.terraform.tfstate'
+
+          # PHIR: Prod ke liye Apply
+          - task: TerraformTaskV4@4
+            displayName: 'Terraform Apply Prod'
             inputs:
               provider: 'azurerm'
               command: 'apply'
